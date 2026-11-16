@@ -34,3 +34,4 @@ def test_finance_api_ownership_summary_budgets_import_and_logout(tmp_path):
         assert alice.delete(f"/api/transactions/{created.json()['id']}",headers=headers).status_code==200
         assert alice.post("/api/auth/logout",json={},headers=headers).status_code==200
         assert alice.get("/api/categories").status_code==401
+        assert alice.post("/api/auth/login",json={"email":"a@example.test","password":"long-test-password","name":""},headers=headers).status_code==200
