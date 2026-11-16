@@ -21,7 +21,7 @@ from .domain import ValidationError
 class Credentials(BaseModel):
     email: str = Field(min_length=3, max_length=254, pattern=r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
     password: str = Field(min_length=12, max_length=128)
-    name: str = Field(default="Customer", min_length=1, max_length=100)
+    name: str = Field(default="Customer", max_length=100)
 
 
 class CategoryInput(BaseModel):
@@ -130,6 +130,8 @@ def create_app(url=None, origin=None):
             email = data.email.strip().lower()
             user = session.scalar(select(User).where(User.email == email))
             if action == "register":
+                if not data.name.strip():
+                    raise HTTPException(400,"Name required")
                 if user:
                     raise HTTPException(409, "Email unavailable")
                 user = User(email=email, name=data.name.strip(), password_hash=hash_password(data.password))
