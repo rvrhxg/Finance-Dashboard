@@ -37,5 +37,4 @@ uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8002
 
 [Мобильный экран 390 px](docs/screenshots/dashboard-mobile.png) · [Фактические проверки](docs/ACCEPTANCE.md)
 
-
-[Общее портфолио: проекты, запуск, скриншоты и вопросы для собеседования](docs/PORTFOLIO.md). Все проекты — самостоятельные учебные MVP; production-готовность не заявляется.
+[Все проекты портфолио и инструкции запуска](docs/PORTFOLIO.md).
