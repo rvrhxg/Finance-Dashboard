@@ -15,3 +15,8 @@
 ## Readiness, безопасные HTTP-логи и backup/restore
 
 [CI 43930004510](https://github.com/rvrhxg/Finance-Dashboard/actions/runs/43930004510) на 5d63c21: все job успешны на Python3.12/3.13/3.14. Проверены200/503 readiness, реальная недоступность БД/структуры, request_id и отсутствие URL/query/cookie/тела/секрета в JSON-событиях, общий500 без внутреннего текста, SQLite WAL-snapshot/restore, запрет перезаписи и повреждённый источник. PostgreSQL-матрица выполнила pg_dump/pg_restore между двумя временными базами с BigInteger/внешним ключом, проверила непустую цель и новый файл. Использовался клиент postgres17 в Docker. Docker build/runtime/readiness/persistence и Chromium успешны. Локально: 14 passed, 2 skipped; PostgreSQL локально не установлен. Strict mypy охватывает новые эксплуатационные модули и ранее указанный типизированный модуль, RuffE9/F — app/tests/scripts. Шифрование/ротация/offsite/PITR и аварийные RPO/RTO не проверены; это остаётся MVP. [Инструкции](OPERATIONS.md).
+
+
+## Recorded demonstration
+
+CI 43939463321 passed. The published WebM is 22.17 seconds at 1280x888, without audio, with explicitly documented 3x playback slowdown. File SHA256 matches metadata; six-frame contact sheet was visually reviewed. This is a Chromium recording with fictional data. It does not establish production readiness or real Telegram delivery.

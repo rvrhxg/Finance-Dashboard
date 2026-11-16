@@ -36,3 +36,6 @@ SQL GROUP BY/SUM/COUNT выполняются в БД, суммы — целые
 
 
 [Readiness, JSON-логи и проверка backup/restore](docs/OPERATIONS.md).
+
+
+[Видеодемонстрация и обзорные кадры](docs/demo/README.md).
