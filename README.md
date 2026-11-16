@@ -22,7 +22,7 @@ uvicorn app.main:create_app --factory --no-access-log --host 127.0.0.1 --port 80
 
 SQL GROUP BY/SUM/COUNT выполняются в БД, суммы — целые копейки. Сравниваются равные по числу дней периоды; при нулевой базе процент не определяется. Экспорт отчёта формирует CSV из месячных агрегатов через pandas, без загрузки всей истории в память.
 
-`pytest -q`: локально Python3.14 — 10 passed, 1 skipped (нет PostgreSQL). CI настроен на Python3.12/3.13/3.14 с отдельной PostgreSQL-схемой, проверкой BigInteger и владельцев; Docker/runtime и Chromium проверяют интерфейс и сохранность данных. Результаты конкретных запусков: [ACCEPTANCE.md](docs/ACCEPTANCE.md). Для качества: установите requirements-quality.txt, запустите `python -m ruff check app tests scripts` и `python -m mypy`. Ruff E9/F проверяет приложение, тесты и скрипты; strict mypy пока проверяет app/periods.py.
+`pytest -q`: локально Python3.14 — 14 passed, 2 skipped (нет PostgreSQL). CI настроен на Python3.12/3.13/3.14 с отдельной PostgreSQL-схемой, проверкой BigInteger и владельцев; Docker/runtime и Chromium проверяют интерфейс и сохранность данных. Результаты конкретных запусков: [ACCEPTANCE.md](docs/ACCEPTANCE.md). Для качества: установите requirements-quality.txt, запустите `python -m ruff check app tests scripts` и `python -m mypy`. Ruff E9/F проверяет приложение, тесты и скрипты; strict mypy пока проверяет app/periods.py.
 
 ## Ограничения
 
