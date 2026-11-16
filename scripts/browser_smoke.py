@@ -45,7 +45,8 @@ with tempfile.TemporaryDirectory(prefix="ledger-browser-") as temporary:
                 page.locator('#export-report').click()
             assert download_info.value.suggested_filename=='ledger-monthly.csv'
             pause(page)
-            page.screenshot(path="screenshots/dashboard-desktop.png",full_page=True)
+            if not recording_enabled():
+                page.screenshot(path="screenshots/dashboard-desktop.png",full_page=True)
             page.get_by_role("button",name="+ Операция",exact=True).click()
             dialog=page.locator("#editor")
             dialog.get_by_label("Сумма, ₽",exact=True).fill("1234.56")
@@ -63,9 +64,11 @@ with tempfile.TemporaryDirectory(prefix="ledger-browser-") as temporary:
             dialog.get_by_label("Лимит, ₽",exact=True).fill("30000")
             dialog.get_by_role("button",name="Сохранить",exact=True).click()
             dialog.wait_for(state="hidden")
-            page.set_viewport_size({"width":390,"height":844})
+            if not recording_enabled():
+                page.set_viewport_size({"width":390,"height":844})
             pause(page)
-            page.screenshot(path="screenshots/dashboard-mobile.png",full_page=True)
+            if not recording_enabled():
+                page.screenshot(path="screenshots/dashboard-mobile.png",full_page=True)
             assert not errors,errors
             finish_recording(page,'ledger')
             browser.close()
