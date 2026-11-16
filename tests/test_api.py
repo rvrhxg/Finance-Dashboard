@@ -25,6 +25,15 @@ def test_finance_api_ownership_summary_budgets_import_and_logout(tmp_path):
         report=alice.get("/api/analytics?start=2026-01-01&end=2026-01-31")
         assert report.status_code==200,report.text
         assert report.json()["balance_kopecks"]==-123456
+        compare=alice.get('/api/analytics/compare?start=2026-01-01&end=2026-01-31')
+        assert compare.status_code==200,compare.text
+        assert compare.json()['changes']['expense_kopecks']['delta_kopecks']==123456
+        assert bob.get('/api/analytics/compare?start=2026-01-01&end=2026-01-31').json()['current']['count']==0
+        exported=alice.get('/api/analytics/monthly.csv?start=2026-01-01&end=2026-01-31')
+        assert '2026-01,expense,123456' in exported.text
+        assert 'attachment' in exported.headers['content-disposition']
+        assert '123456' not in bob.get('/api/analytics/monthly.csv?start=2026-01-01&end=2026-01-31').text
+        assert alice.get('/api/analytics/compare?start=0001-01-01&end=0001-01-01').status_code==400
         assert alice.get("/api/analytics?start=2026-02-01&end=2026-01-01").status_code==400
         csv="external_id,date,kind,category,amount,note\nx1,2026-01-01,income,Salary,100000.00,January\n"
         assert alice.post("/api/import",json={"content":csv},headers=headers).json()=={"added":1,"skipped":0}
@@ -34,4 +43,5 @@ def test_finance_api_ownership_summary_budgets_import_and_logout(tmp_path):
         assert alice.delete(f"/api/transactions/{created.json()['id']}",headers=headers).status_code==200
         assert alice.post("/api/auth/logout",json={},headers=headers).status_code==200
         assert alice.get("/api/categories").status_code==401
+        assert alice.get('/api/analytics/monthly.csv?start=2026-01-01&end=2026-01-31').status_code==401
         assert alice.post("/api/auth/login",json={"email":"a@example.test","password":"long-test-password","name":""},headers=headers).status_code==200

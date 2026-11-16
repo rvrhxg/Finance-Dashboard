@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import BigInteger,CheckConstraint,Date,ForeignKey,String,UniqueConstraint
+from sqlalchemy import BigInteger,CheckConstraint,Date,ForeignKey,String,UniqueConstraint,Index
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 
 
@@ -33,7 +33,7 @@ class Category(Base):
 
 class Transaction(Base):
     __tablename__="transactions"
-    __table_args__=(UniqueConstraint("user_id","external_id"),CheckConstraint("amount_kopecks>0"))
+    __table_args__=(UniqueConstraint("user_id","external_id"),CheckConstraint("amount_kopecks>0"),Index('ix_transactions_owner_period','user_id','occurred_on'))
     id:Mapped[int]=mapped_column(primary_key=True)
     user_id:Mapped[int]=mapped_column(ForeignKey("users.id"),index=True)
     category_id:Mapped[int]=mapped_column(ForeignKey("categories.id"))

@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from .database import database
 from .models import User, LoginSession, Category, Transaction, Budget
 from .security import hash_password, verify_password, new_token, token_hash
-from .analytics import analytics
+from .analytics import analytics, compare_periods
 from .import_csv import import_csv
 from .domain import money_to_kopecks
 from datetime import date
@@ -221,6 +221,28 @@ def create_app(url=None, origin=None):
                 return analytics(session,user.id,start,end)
         except ValidationError as error:
             raise HTTPException(400,str(error))
+
+    @app.get('/api/analytics/compare')
+    def comparison(request: Request, start: date, end: date):
+        try:
+            with sessions() as session:
+                user = identity(request, session)
+                return compare_periods(session, user.id, start, end)
+        except ValidationError as error:
+            raise HTTPException(400, str(error))
+
+    @app.get('/api/analytics/monthly.csv')
+    def monthly_export(request: Request, start: date, end: date):
+        import pandas as pd
+        try:
+            with sessions() as session:
+                user = identity(request, session)
+                monthly = analytics(session, user.id, start, end)['monthly']
+            frame = pd.DataFrame(monthly, columns=['month', 'kind', 'amount_kopecks'])
+            return Response(frame.to_csv(index=False), media_type='text/csv',
+                            headers={'Content-Disposition': 'attachment; filename="ledger-monthly.csv"'})
+        except ValidationError as error:
+            raise HTTPException(400, str(error))
 
     @app.post("/api/import")
     def csv_import(data: CsvInput,request: Request):

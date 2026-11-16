@@ -4,6 +4,8 @@ WORKDIR /app
 COPY requirements.lock ./
 RUN pip install --no-cache-dir -r requirements.lock && useradd --create-home --uid 1000 ledger
 COPY app ./app
+COPY alembic.ini ./
+COPY migrations ./migrations
 COPY public ./public
 USER ledger
 EXPOSE 8002

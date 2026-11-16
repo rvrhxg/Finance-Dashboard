@@ -17,3 +17,6 @@ Swagger /docs, схема /openapi.json. Изменяющие запросы т�
 | GET | /api/health | HTTP liveness |
 
 CSV: external_id,date,kind,category,amount,note. Повтор совпадающего ID возвращает skipped; другой payload — ошибка. Только свои категории/операции/бюджеты. Суммы ответа указаны в копейках. Бюджет обновляется для той же пары месяц/категория. Нет внешней синхронизации с банками.
+
+
+Новые GET /api/analytics/compare и /api/analytics/monthly.csv принимают start/end и требуют сессию. Сравнение возвращает current/previous/changes; CSV содержит месячные агрегаты. [REPORTS.md](REPORTS.md).

@@ -1,40 +1,35 @@
-# Ledger — Finance Dashboard
+# Ledger Finance Dashboard
 
-Самостоятельный Python-проект портфолио: учёт доходов и расходов, категории, импорт CSV и аналитика. Планируемый стек FastAPI, SQLAlchemy, PostgreSQL, pandas, pytest; JavaScript-интерфейс. Платные банковские интеграции не используются.
+Самостоятельный учебный Python MVP: доходы и расходы, категории, бюджеты, атомарный CSV-импорт, SQL-аналитика и сравнение периодов. FastAPI, SQLAlchemy, Alembic, PostgreSQL и pandas для CSV-экспорта; адаптивный JavaScript-интерфейс. Платные услуги и банковские подключения не используются.
 
-Реализованы FastAPI REST API, SQLAlchemy, авторизация, операции и категории, месячные бюджеты, pandas-аналитика, атомарный CSV-импорт и адаптивный JavaScript-интерфейс. Деньги хранятся целыми копейками, API принимает десятичные суммы строками. Данные аккаунтов изолированы.
+## Локальный запуск новой базы
 
-## Локальный запуск
-
-Python 3.14, отдельное окружение, `pip install -r requirements.lock`.
+Python 3.12–3.14, отдельное окружение. Установите `python -m pip install -r requirements.lock`, затем:
 
 ```sh
+python -m alembic upgrade head
 python -m app.seed --email demo@example.test
 uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8002
 ```
 
-Откройте http://localhost:8002. Пароль демо-аккаунта вводится через getpass; все 66 операций вымышленные. Существующий аккаунт скрипт не изменяет. Можно зарегистрировать новый аккаунт без демоданных.
+Откройте http://localhost:8002. Пароль вымышленного демо-аккаунта вводится локально через getpass; встроенных общих паролей нет. Seed создаёт 66 вымышленных операций и не перезаписывает существующий аккаунт. Можно зарегистрировать собственный пустой аккаунт через интерфейс. Для старой базы сначала прочитайте [инструкцию миграций](docs/MIGRATIONS.md): upgrade требует предварительной сверки и stamp 0001.
 
 ## Docker и PostgreSQL
 
-Создайте `.env` с POSTGRES_PASSWORD и случайным паролем из букв/цифр; файл исключён из Git. `docker compose up --build -d`, затем `docker compose exec dashboard python -m app.seed --email demo@example.test`. PostgreSQL хранится в именованном томе, панель доступна только на localhost:8002. Для HTTPS нужны TLS proxy, ENVIRONMENT=production и точный APP_ORIGIN.
+Создайте исключённый из Git .env с POSTGRES_PASSWORD из случайных букв и цифр. `docker compose up --build -d`, затем `docker compose exec dashboard python -m app.seed --email demo@example.test`. Данные находятся в именованном томе, интерфейс доступен на localhost:8002. Не используйте down -v для остановки с сохранением данных. HTTPS требует собственного TLS proxy, ENVIRONMENT=production и APP_ORIGIN; одно это не делает MVP production-сервисом.
 
-## Возможности и проверки
+## Отчёты и проверки
 
-Доходы/расходы, разница периода, доля сбережений, графики по месяцам и категориям, операции с удалением, лимиты расходов и CSV-импорт. CSV: external_id,date,kind,category,amount,note; одинаковые повторы пропускаются, конфликтующие ID отклоняются, ошибочный импорт откатывается целиком.
+SQL GROUP BY/SUM/COUNT выполняются в БД, суммы — целые копейки. Сравниваются равные по числу дней периоды; при нулевой базе процент не определяется. Экспорт отчёта формирует CSV из месячных агрегатов через pandas, без загрузки всей истории в память.
 
-`pytest -q`: семь тестов домена, pandas, CSV, HTTP-прав и демоданных. [CI 43872604052](https://github.com/rvrhxg/Finance-Dashboard/actions/runs/43872604052) подтвердил тесты, Docker build/runtime с PostgreSQL, сохранение операции и аналитики после перезапуска, Chromium вход/операцию/импорт/бюджет. Desktop и mobile 390 px проверены визуально после исправления переполнения.
+`pytest -q`: локально Python3.14 — 10 passed, 1 skipped (нет PostgreSQL). CI настроен на Python3.12/3.13/3.14 с отдельной PostgreSQL-схемой, проверкой BigInteger и владельцев; Docker/runtime и Chromium проверяют интерфейс и сохранность данных. Результаты конкретных запусков: [ACCEPTANCE.md](docs/ACCEPTANCE.md). Для качества: установите requirements-quality.txt, запустите `python -m ruff check app tests scripts` и `python -m mypy`. Ruff E9/F проверяет приложение, тесты и скрипты; strict mypy пока проверяет app/periods.py.
 
 ## Ограничения
 
-Сервис не предоставляет инвестиционных рекомендаций и не является банковским продуктом. Только RUB, без банковских подключений и конвертации. Разница периода — не банковский остаток. До 500 последних операций в списке, аналитика читает весь выбранный период в память. Нет миграций, восстановления пароля и общего распределённого limiter. Портфолио v1 не означает production-готовность.
+Только RUB, без банковской синхронизации, конвертации валют и инвестиционных рекомендаций. Разница доходов и расходов не означает банковский остаток. Список показывает до 500 последних операций, агрегаты охватывают весь выбранный период. Отчёт не гарантирует единый снимок при конкурентных изменениях между SQL-запросами. Нет восстановления пароля, общего распределённого limiter и подтверждённых нагрузочных гарантий. Аварийное восстановление и production-эксплуатация не считаются проверенными.
 
-[Архитектура](docs/ARCHITECTURE.md) · [REST API](docs/API.md).
-
-## Скриншоты
+[Архитектура](docs/ARCHITECTURE.md) · [REST API](docs/API.md) · [Отчёты](docs/REPORTS.md) · [Миграции](docs/MIGRATIONS.md) · [Другие проекты](docs/PORTFOLIO.md)
 
 ![Ledger desktop](docs/screenshots/dashboard-desktop.png)
 
-[Мобильный экран 390 px](docs/screenshots/dashboard-mobile.png) · [Фактические проверки](docs/ACCEPTANCE.md)
-
-[Все проекты портфолио и инструкции запуска](docs/PORTFOLIO.md).
+[Мобильный экран](docs/screenshots/dashboard-mobile.png)

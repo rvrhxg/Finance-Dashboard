@@ -2,9 +2,20 @@
 name = "ledger-finance-dashboard"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "sqlalchemy>=2,<3", "psycopg[binary]>=3.2,<4", "pandas>=2.2,<4"]
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "sqlalchemy>=2,<3", "psycopg[binary]>=3.2,<4", "pandas>=2.2,<4", "alembic>=1.20,<2"]
 [project.optional-dependencies]
 test = ["pytest>=8,<10", "httpx>=0.27,<1"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E9", "F"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["app/periods.py"]
+strict = true

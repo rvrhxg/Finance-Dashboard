@@ -39,6 +39,10 @@ with tempfile.TemporaryDirectory(prefix="ledger-browser-") as temporary:
             page.get_by_role("button",name="Продолжить →",exact=True).click()
             page.locator("#dashboard").wait_for(state="visible")
             page.locator("#monthly .month").first.wait_for()
+            page.locator('#comparison').get_by_role('heading',name='Сравнение с предыдущим периодом',exact=True).wait_for()
+            with page.expect_download() as download_info:
+                page.locator('#export-report').click()
+            assert download_info.value.suggested_filename=='ledger-monthly.csv'
             page.screenshot(path="screenshots/dashboard-desktop.png",full_page=True)
             page.get_by_role("button",name="+ Операция",exact=True).click()
             dialog=page.locator("#editor")
