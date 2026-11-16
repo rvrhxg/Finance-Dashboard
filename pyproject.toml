@@ -17,5 +17,5 @@ select = ["E9", "F"]
 
 [tool.mypy]
 python_version = "3.12"
-files = ["app/periods.py"]
+files = ["app/periods.py", "app/observability.py", "app/sqlite_backup.py", "app/pg_backup.py"]
 strict = true

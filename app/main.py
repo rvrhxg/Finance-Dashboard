@@ -1,3 +1,4 @@
+from .observability import install_observability
 import os
 import time
 from pathlib import Path
@@ -289,6 +290,14 @@ def create_app(url=None, origin=None):
                 spent=session.scalar(select(func.coalesce(func.sum(Transaction.amount_kopecks),0)).where(Transaction.user_id==user.id,Transaction.category_id==row.category_id,Transaction.occurred_on>=first,Transaction.occurred_on<=last))
                 result.append({"id":row.id,"category_id":row.category_id,"month":row.month,"limit_kopecks":row.limit_kopecks,"spent_kopecks":spent})
             return result
+
+    def database_probe():
+        from sqlalchemy import text
+        with engine.connect() as connection:
+            if connection.execute(text('SELECT version_num FROM alembic_version LIMIT 1')).first() is None:
+                raise RuntimeError('Schema is not initialized')
+
+    install_observability(app, database_probe)
 
     static = Path(__file__).resolve().parent.parent / "public"
     if static.exists():

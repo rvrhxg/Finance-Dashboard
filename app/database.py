@@ -8,7 +8,7 @@ from alembic.config import Config
 
 def database(url=None, initialize=True):
     url = url or os.environ.get("DATABASE_URL", "sqlite:///ledger.sqlite")
-    engine = create_engine(url, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {})
+    engine = create_engine(url, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {"connect_timeout": 3}, pool_pre_ping=True)
     if url.startswith("sqlite"):
         @event.listens_for(engine, "connect")
         def foreign_keys(connection, _):

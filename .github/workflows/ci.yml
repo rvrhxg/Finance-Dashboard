@@ -30,6 +30,7 @@ jobs:
       - run: pytest -q
         env:
           TEST_POSTGRES_URL: postgresql+psycopg://test:isolated-ci-only@localhost:5432/finance_test
+          PG_USE_DOCKER: '1'
   verify:
     runs-on: ubuntu-24.04
     services:
@@ -59,6 +60,7 @@ jobs:
       - run: python -m scripts.container_smoke
         env:
           TEST_POSTGRES_URL: postgresql+psycopg://test:isolated-ci-only@localhost:5432/finance_test
+          PG_USE_DOCKER: '1'
       - run: pip install playwright==1.56.0
       - run: python -m playwright install --with-deps chromium
       - run: python -m scripts.browser_smoke

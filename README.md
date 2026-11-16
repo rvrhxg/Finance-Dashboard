@@ -9,7 +9,7 @@ Python 3.12–3.14, отдельное окружение. Установите 
 ```sh
 python -m alembic upgrade head
 python -m app.seed --email demo@example.test
-uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8002
+uvicorn app.main:create_app --factory --no-access-log --host 127.0.0.1 --port 8002
 ```
 
 Откройте http://localhost:8002. Пароль вымышленного демо-аккаунта вводится локально через getpass; встроенных общих паролей нет. Seed создаёт 66 вымышленных операций и не перезаписывает существующий аккаунт. Можно зарегистрировать собственный пустой аккаунт через интерфейс. Для старой базы сначала прочитайте [инструкцию миграций](docs/MIGRATIONS.md): upgrade требует предварительной сверки и stamp 0001.
@@ -33,3 +33,6 @@ SQL GROUP BY/SUM/COUNT выполняются в БД, суммы — целые
 ![Ledger desktop](docs/screenshots/dashboard-desktop.png)
 
 [Мобильный экран](docs/screenshots/dashboard-mobile.png)
+
+
+[Readiness, JSON-логи и проверка backup/restore](docs/OPERATIONS.md).

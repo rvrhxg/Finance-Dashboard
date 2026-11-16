@@ -17,7 +17,7 @@ with tempfile.TemporaryDirectory(prefix="ledger-browser-") as temporary:
     with sessions.begin() as session:
         seed_demo(session,"demo@example.test",password)
     engine.dispose()
-    server=subprocess.Popen([sys.executable,"-m","uvicorn","app.main:create_app","--factory","--host","127.0.0.1","--port","8002"],env={**os.environ,"DATABASE_URL":url,"APP_ORIGIN":"http://127.0.0.1:8002"})
+    server=subprocess.Popen([sys.executable,"-m","uvicorn","app.main:create_app","--factory","--no-access-log","--host","127.0.0.1","--port","8002"],env={**os.environ,"DATABASE_URL":url,"APP_ORIGIN":"http://127.0.0.1:8002"})
     try:
         for _ in range(60):
             try:
