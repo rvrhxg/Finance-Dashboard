@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from contextlib import asynccontextmanager
 from urllib.parse import urlsplit
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response, Query
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, StrictInt
 from sqlalchemy import select
@@ -184,10 +184,12 @@ def create_app(url=None, origin=None):
         return {"id":t.id,"category_id":t.category_id,"occurred_on":t.occurred_on.isoformat(),"amount_kopecks":t.amount_kopecks,"note":t.note,"external_id":t.external_id}
 
     @app.get("/api/transactions")
-    def transactions(request: Request):
+    def transactions(request: Request, response: Response, offset: int = Query(0, ge=0, le=10000000), limit: int = Query(50, ge=1, le=100)):
         with sessions() as session:
             user=identity(request,session)
-            return [transaction_data(t) for t in session.scalars(select(Transaction).where(Transaction.user_id==user.id).order_by(Transaction.occurred_on.desc(),Transaction.id.desc()).limit(500))]
+            from sqlalchemy import func
+            response.headers['X-Total-Count'] = str(session.scalar(select(func.count()).select_from(Transaction).where(Transaction.user_id==user.id)))
+            return [transaction_data(t) for t in session.scalars(select(Transaction).where(Transaction.user_id==user.id).order_by(Transaction.occurred_on.desc(),Transaction.id.desc()).offset(offset).limit(limit))]
 
     @app.post("/api/transactions",status_code=201)
     def add_transaction(data: TransactionInput,request: Request):

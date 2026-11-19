@@ -59,6 +59,7 @@ with tempfile.TemporaryDirectory(prefix="ledger-browser-") as temporary:
             dialog.get_by_label("Содержимое CSV",exact=True).fill(source)
             dialog.get_by_role("button",name="Сохранить",exact=True).click()
             dialog.wait_for(state="hidden")
+            page.get_by_role("button",name="Показать ещё операции",exact=True).click()
             page.get_by_text("Импорт из браузера",exact=True).wait_for()
             page.get_by_role("button",name="+ Лимит",exact=True).click()
             dialog.get_by_label("Лимит, ₽",exact=True).fill("30000")

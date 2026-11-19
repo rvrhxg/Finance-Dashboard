@@ -39,3 +39,8 @@ SQL GROUP BY/SUM/COUNT выполняются в БД, суммы — целые
 
 
 [Видеодемонстрация и обзорные кадры](docs/demo/README.md).
+
+
+## List pagination
+
+GET list endpoints accept limit (1..100, default50) and offset (0..10000000). Responses remain JSON arrays with X-Total-Count scoped to the signed-in owner; CRM deal totals also respect stage. Stable order: descending ID for CRM; occurred_on descending, ID descending for Ledger. UI loads50 at a time with Show more. Aggregates still cover all records. Offset pagination is not a snapshot: concurrent inserts/deletes can shift pages. Refresh resets the loaded list.
